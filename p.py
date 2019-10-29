@@ -13,10 +13,13 @@ from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
-from tensorflow.python.keras import backend as K
+from keras import backend as K
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.utils.multiclass import type_of_target
+from sklearn.preprocessing import LabelEncoder
+
+
 
 
 
@@ -155,13 +158,12 @@ clf = Transformer(trainPath, testPath, verbose=True)
 xTrain, yTrain = clf.getTrainData()
 xTest, yTest   = clf.getTestData()
 
-codeLabels(disorder = args.dataset)
-
 # Brain all Data in range 0.0 and 1.0
 xTrain = xTrain.astype('float32')
 xTest = xTest.astype('float32')
 xTrain = (xTrain + 1)/2
 xTest  = (xTest  + 1)/2
+codeLabels(disorder = args.dataset)
 
 batch_size = 64
 num_classes = len(np.unique(yTrain))
@@ -183,33 +185,58 @@ else:
     input_shape = (img_rows, img_cols, 1)
 
 
-#Accuracy
+
+label_encoder = LabelEncoder()
+yTrain = label_encoder.fit_transform(yTrain)
+yTest  = label_encoder.fit_transform(yTest)
+print(type_of_target(yTrain), type_of_target(yTest))
+
 # convert class vectors to binary class matrices
 yTrain = keras.utils.to_categorical(yTrain, num_classes)
 yTest = keras.utils.to_categorical(yTest, num_classes)
+print(type_of_target(yTrain))
 
-model = Sequential()
-model.add(Conv2D(16, kernel_size=(3, 3),
-                 activation='relu',
-                 input_shape=input_shape))
-model.add(Conv2D(32, (3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-#model.add(Dropout(0.25))
-model.add(Flatten())
-model.add(Dense(12, activation='relu'))
-#model.add(Dropout(0.5))
-model.add(Dense(num_classes, activation='softmax'))
+X = np.concatenate((xTrain, xTest), axis=0)
+Y = np.concatenate((yTrain, yTest), axis=0)
+print(type_of_target(Y))
 
-model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.Adadelta(),
-              metrics=['accuracy'])
 
-model.fit(xTrain, yTrain,
+
+
+
+ipdb.set_trace()
+# KFold Cross Validation
+
+# fix random seed for reproducibility
+seed = 7
+np.random.seed(seed)
+# define 10-fold cross validation test harness
+kfold = StratifiedKFold(n_splits=6, shuffle=True, random_state=seed)
+cvscores = []
+for train, test in kfold.split(X, Y):
+    # create model
+    model = Sequential()
+    model.add(Conv2D(16, kernel_size=(3, 3),
+                     activation='relu',
+                     input_shape=input_shape))
+    model.add(Conv2D(32, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    #model.add(Dropout(0.25))
+    model.add(Flatten())
+    model.add(Dense(12, activation='relu'))
+    #model.add(Dropout(0.5))
+    model.add(Dense(num_classes-1, activation='softmax'))
+
+    model.compile(loss=keras.losses.categorical_crossentropy,
+                  optimizer=keras.optimizers.Adadelta(),
+                  metrics=['accuracy'])
+    # Fit the model
+    model.fit(X[train], Y[train],
           batch_size=batch_size,
           epochs=epochs,
-          verbose=1,
-          validation_data=(xTest, yTest))
-score = model.evaluate(xTest, yTest, verbose=0)
-model.save(args.ageMatchUnmatch+"_"+args.dataset+'.h5')
-print('Test loss:', score[0])
-print('Test accuracy:', score[1])
+          verbose=1)
+    # evaluate the model
+    scores = model.evaluate(X[test], Y[test], verbose=0)
+    print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+    cvscores.append(scores[1] * 100)
+print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))

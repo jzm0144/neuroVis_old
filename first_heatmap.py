@@ -15,10 +15,10 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from tensorflow.python.keras import backend as K
 from keras.wrappers.scikit_learn import KerasClassifier
-from sklearn.model_selection import StratifiedKFold
-from sklearn.utils.multiclass import type_of_target
 
+from keras.models import load_model
 
+import innvestigate 
 
 import argparse
 import os, sys
@@ -213,3 +213,27 @@ score = model.evaluate(xTest, yTest, verbose=0)
 model.save(args.ageMatchUnmatch+"_"+args.dataset+'.h5')
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
+
+
+
+
+model = load_model(args.ageMatchUnmatch+"_"+args.dataset+'.h5')
+
+# Strip softmax layer
+model = innvestigate.utils.model_wo_softmax(model)
+
+analyzer = innvestigate.create_analyzer("gradient", model)
+
+inputs = xTest[:10,:,:,:]
+analysis = analyzer.analyze(inputs)
+
+
+ipdb.set_trace()
+
+
+analyzer = innvestigate.create_analyzer("gradient",
+                                        model,
+                    neuron_selection_mode= "index")
+analysis = analyzer.analyze(inputs)
+
+
