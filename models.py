@@ -39,7 +39,7 @@ def trainModel(input_shape
               epochs=epochs,
               verbose=1,
               validation_data=(xTest, yTest))
-    model.save(ageMatchUnmatch+ "_"+ dataset+'.h5')
+    model.save('Models/'+ ageMatchUnmatch+ "_"+ dataset+'.h5')
 
 
     trainScore = model.evaluate(xTrain, yTrain, verbose=0)

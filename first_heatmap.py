@@ -98,8 +98,8 @@ trainModel(input_shape
           ,num_classes)
 
 
-ipdb.set_trace()
-model = load_model(args.ageMatchUnmatch+"_"+args.dataset+'.h5')
+
+model = load_model('Models/'+ args.ageMatchUnmatch+"_"+args.dataset+'.h5')
 
 #Decide your inputs
 inputs = xTest[:,:,:,:]
