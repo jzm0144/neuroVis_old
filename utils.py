@@ -76,7 +76,7 @@ def passTopPaths(connVec, top):
     return temp
 
 #def saveEdgeFile(img, idx, heatmap_method, clampedNeuron):
-def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset, xPath,yPath):
+def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPath, yPath, map = "all"):
 
     vec = square2Vec(img, vecLength=len(idx))
     vec = passTopPaths(vec, top = topPaths)
@@ -102,12 +102,7 @@ def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset, xPa
                 conn_str = conn_str +'\t'+ str(item)
         conn_str = conn_str + '\n'
 
-    file1 = open('Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'.edge', 'w')
-    file1.write(conn_str)
-    file1.close()   
-
-
-
+       
 
     # Saving Separte Relevance Edges
     conn_str_pos = ''
@@ -148,10 +143,26 @@ def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset, xPa
         conn_str_pos = conn_str_pos + '\n'
         conn_str_neg = conn_str_neg + '\n'
 
+    if map == "abs":
+        file1 = open('Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'.edge', 'w')
+        file1.write(conn_str)
+        file1.close()
+    elif map == "pos":
+        file2 = open('Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'_pos.edge', 'w')
+        file2.write(conn_str_pos)
+        file2.close()
+    elif map == "neg":
+        file3 = open('Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'_neg.edge', 'w')
+        file3.write(conn_str_neg)
+        file3.close()
+    elif map == "all":
+        file1 = open('Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'.edge', 'w')
+        file1.write(conn_str)
+        file1.close()
+        file2 = open('Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'_pos.edge', 'w')
+        file2.write(conn_str_pos)
+        file2.close()
+        file3 = open('Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'_neg.edge', 'w')
+        file3.write(conn_str_neg)
+        file3.close()
 
-    file2 = open('Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'_pos.edge', 'w')
-    file2.write(conn_str_pos)
-    file2.close()
-    file3 = open('Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'_neg.edge', 'w')
-    file3.write(conn_str_neg)
-    file3.close()
