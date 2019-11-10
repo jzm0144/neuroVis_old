@@ -69,13 +69,14 @@ else:
 yTrain = keras.utils.to_categorical(yTrain, num_classes)
 yTest = keras.utils.to_categorical(yTest, num_classes)
 
+'''
 trainModel(input_shape
           ,xTrain, yTrain
           ,xTest, yTest
           ,args.ageMatchUnmatch
           ,args.dataset
           ,num_classes)
-
+'''
 
 model = load_model('Models/'+ args.ageMatchUnmatch+"_"+args.dataset+'.h5')
 
@@ -87,11 +88,47 @@ print("--------------\nPredicted   ",model.predict(inputs))
 heatmapNumber = -1
 # Strip softmax layer
 model_no_softmax = innvestigate.utils.model_wo_softmax(model)
-heatmaps = ["gradient", "input_t_gradient", "smoothgrad", "lrp.epsilon"]
+#heatmaps = ["gradient", "input_t_gradient", "smoothgrad", "lrp.epsilon"]
+
+
+input_max = 1.0
+input_min = 0.0
+noise_scale = (input_max - input_min) * 0.005
+
+heatmaps = [
+      # NAME                                  OPT.PARAMS                     TITLE
+      # Show input.
+
+      # Function        
+      ("gradient",                      {}                                 ,  "Gradient"),
+      ("smoothgrad",                    {"augment_by_n": 1,
+                                         "noise_scale": noise_scale,
+                                         "postprocess": "square"}          ,  "SmoothGrad"),
+
+      # Signal
+
+      ("deconvnet",                     {}                                 ,  "Deconvnet"),
+
+
+      ("guided_backprop",               {}                                 ,  "Guided Backprop"),
+
+      # Interaction
+      ("deep_taylor.bounded",           {"low": input_min,
+                                         "high": input_max}                ,  "DeepTaylor"),
+
+      ("input_t_gradient",              {}                                 ,  "Input * Gradient"),
+      ("integrated_gradients",          {"reference_inputs": input_min,
+                                         "steps": 16}                      ,  "Integrated Gradients"),
+      ("lrp.z",                         {}                                 ,  "LRP-Z"),
+      ("lrp.epsilon",                   {"epsilon": 1}                     ,  "LRP-Epsilon"),
+      ("lrp.sequential_preset_a_flat",  {"epsilon": 1}                     ,  "LRP-PresetAFlat"),
+      ("lrp.sequential_preset_b_flat",  {"epsilon": 1}                     ,  "LRP-PresetBFlat"),
+]
+
 for heatmap in heatmaps:
     #Create the analyzers
-    analyzer = innvestigate.create_analyzer(heatmap, model_no_softmax, neuron_selection_mode = "index")
+    analyzer = innvestigate.create_analyzer(heatmap[0], model_no_softmax, neuron_selection_mode = "index", **heatmap[1])
     #Generate the heatmaps
     analysis = analyzer.analyze(inputs, args.label)
     #Save the Heatmap Edge files
-    saveEdgeFile(analysis[heatmapNumber,:,:,0], idx, heatmap, str(args.label), args.topPaths, args.dataset, xPath, yPath, map = "pos")
+    saveEdgeFile(analysis[heatmapNumber,:,:,0], idx, heatmap[0], str(args.label), args.topPaths, args.dataset, xPath, yPath, map = "pos")
