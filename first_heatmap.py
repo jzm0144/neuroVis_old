@@ -99,30 +99,26 @@ heatmaps = [
       # NAME                                  OPT.PARAMS                     TITLE
       # Show input.
 
-      # Function        
+      # Gradient Family        
       ("gradient",                      {}                                 ,  "Gradient"),
       ("smoothgrad",                    {"augment_by_n": 1,
                                          "noise_scale": noise_scale,
                                          "postprocess": "square"}          ,  "SmoothGrad"),
-
-      # Signal
-
-      ("deconvnet",                     {}                                 ,  "Deconvnet"),
-
-
-      ("guided_backprop",               {}                                 ,  "Guided Backprop"),
-
-      # Interaction
-      ("deep_taylor.bounded",           {"low": input_min,
-                                         "high": input_max}                ,  "DeepTaylor"),
-
       ("input_t_gradient",              {}                                 ,  "Input * Gradient"),
       ("integrated_gradients",          {"reference_inputs": input_min,
                                          "steps": 16}                      ,  "Integrated Gradients"),
+
+      ("deconvnet",                     {}                                 ,  "Deconvnet"),
+      ("guided_backprop",               {}                                 ,  "Guided Backprop"),
+
+      # LRP Family
+      ("deep_taylor.bounded",           {"low": input_min,
+                                         "high": input_max}                ,  "DeepTaylor"),
       ("lrp.z",                         {}                                 ,  "LRP-Z"),
       ("lrp.epsilon",                   {"epsilon": 1}                     ,  "LRP-Epsilon"),
       ("lrp.sequential_preset_a_flat",  {"epsilon": 1}                     ,  "LRP-PresetAFlat"),
       ("lrp.sequential_preset_b_flat",  {"epsilon": 1}                     ,  "LRP-PresetBFlat"),
+      
 ]
 
 for heatmap in heatmaps:
