@@ -118,7 +118,11 @@ heatmaps = [
       ("lrp.epsilon",                   {"epsilon": 1}                     ,  "LRP-Epsilon"),
       ("lrp.sequential_preset_a_flat",  {"epsilon": 1}                     ,  "LRP-PresetAFlat"),
       ("lrp.sequential_preset_b_flat",  {"epsilon": 1}                     ,  "LRP-PresetBFlat"),
-      
+      # State of the Art Methods
+      #("occlusion",                     {}                                 ,  "Occlusion Map"),
+      #("lime",                          {}                                 ,  "Lime Method"),
+      #("shapley",                       {}                                 ,  "Shapely Values"),
+      #("Meaningful Perturbation",       {}                                 ,  "Meaningful Perturbation")
 ]
 
 for heatmap in heatmaps:
