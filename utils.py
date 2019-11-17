@@ -166,3 +166,9 @@ def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPat
         file3.write(conn_str_neg)
         file3.close()
 
+
+def avgMap(allTestMaps):
+    heatmap = np.mean(allTestMaps, axis = 0)
+    return heatmap
+
+

@@ -125,10 +125,45 @@ heatmaps = [
       #("Meaningful Perturbation",       {}                                 ,  "Meaningful Perturbation")
 ]
 
+consensus = []
+
 for heatmap in heatmaps:
     #Create the analyzers
-    analyzer = innvestigate.create_analyzer(heatmap[0], model_no_softmax, neuron_selection_mode = "index", **heatmap[1])
-    #Generate the heatmaps
+    analyzer = innvestigate.create_analyzer(heatmap[0],
+                                            model_no_softmax,
+                                            neuron_selection_mode = "index",
+                                            **heatmap[1])    
+    # Generate the heatmaps
     analysis = analyzer.analyze(inputs, args.label)
-    #Save the Heatmap Edge files
-    saveEdgeFile(analysis[heatmapNumber,:,:,0], idx, heatmap[0], str(args.label), args.topPaths, args.dataset, xPath, yPath, map = "pos")
+
+    thisHeatmap = analysis[heatmapNumber, :, :, 0]
+    
+    # Save the Heatmap Edge files
+    saveEdgeFile(thisHeatmap,
+                 idx,
+                 heatmap[0],
+                 str(args.label),
+                 args.topPaths,
+                 args.dataset,
+                 xPath,
+                 yPath,
+                 map = "pos")
+
+    # consensus heatmap
+    consensus.append(avgMap(analysis[:,:,:,0]))
+ 
+#Save the Consensus Heatmap Edge files
+for index in range(len(consensus)):
+    heatmap = consensus[index]
+    heatTuple = heatmaps[index]
+    heatmapLabel = heatTuple[0]
+    
+    saveEdgeFile(heatmap,
+                 idx,
+                 "concensus_"+heatmapLabel,
+                 str(args.label),
+                 args.topPaths,
+                 args.dataset,
+                 xPath,
+                 yPath,
+                 map = "pos")
