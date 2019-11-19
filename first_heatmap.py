@@ -151,19 +151,41 @@ for heatmap in heatmaps:
 
     # consensus heatmap
     consensus.append(avgMap(analysis[:,:,:,0]))
- 
-#Save the Consensus Heatmap Edge files
+
+
+
+
+# The Node File
+temp = {"ADNI":200, "ABIDE":200,"ADHD":190, "PTSD":125}
+nodeFile = args.dataset + str(temp[args.dataset]) + ".node"
+
+
+
+
+# Save the Consensus Heatmap Edge files
+# Also save the BrainNet png files
 for index in range(len(consensus)):
     heatmap = consensus[index]
     heatTuple = heatmaps[index]
     heatmapLabel = heatTuple[0]
     
-    saveEdgeFile(heatmap,
-                 idx,
-                 "concensus_"+heatmapLabel,
-                 str(args.label),
-                 args.topPaths,
-                 args.dataset,
-                 xPath,
-                 yPath,
-                 map = "pos")
+    edge = saveEdgeFile(img = heatmap,
+                         idx = idx,
+                         heatmap_method = "concensus_"+heatmapLabel,
+                         clampedNeuron = str(args.label),
+                         topPaths = args.topPaths,
+                         dataset = args.dataset,
+                         xPath = xPath,
+                         yPath = yPath,
+                         map = "pos")
+
+    plotBrainNet(nodePath = "Node/"+nodeFile,
+                 edgePath = edge,
+                 outputPath = 'Results/'+args.dataset,
+                 configFile = 'config.mat')
+
+
+
+
+
+
