@@ -45,7 +45,7 @@ clf = Transformer(trainPath, testPath, verbose=True)
 xTrain, yTrain = clf.getTrainData()
 xTest, yTest   = clf.getTestData()
 idx, xPath, yPath = clf.getPaths()
-codeLabels(yTrain = yTrain,yTest = yTest,disorder = args.dataset)
+codeLabels(yTrain = yTrain, yTest = yTest, disorder = args.dataset)
 
 # Bring all Data in range 0.0 and 1.0
 xTrain = xTrain.astype('float32')
@@ -186,9 +186,5 @@ for index in range(len(consensus)):
                  edgePath = edge,
                  outputPath = 'Results/'+args.dataset,
                  configFile = 'config.mat')
-
-
-
-
 
 

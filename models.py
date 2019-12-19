@@ -48,3 +48,5 @@ def trainModel(input_shape
 
     print('Train loss: ', trainScore[0], '           Train accuracy: ', trainScore[1])
     print('Test loss:  ', testScore[0],  '           Test accuracy:  ', testScore[1])
+
+    
