@@ -1,5 +1,5 @@
 import copy
-
+import numpy as np
 
 
 def occlusionMap(image, model, occluding_size = 1, occluding_pixel = 0, occluding_stride = 1, class_label = 0):

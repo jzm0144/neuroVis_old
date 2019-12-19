@@ -7,9 +7,6 @@ import os, sys
 
 import matlab.engine
 
-
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument("dataset", type=str, help="Dataset you want to train on \nADNI, ABIDE, ADHD or PTSD?")
 args = parser.parse_args()

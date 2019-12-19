@@ -200,5 +200,3 @@ def plotBrainNet(nodePath, edgePath, outputPath, configFile = "config.mat"):
                         outputFile,
                         configFile)
     eng.quit()
-
-

@@ -32,10 +32,12 @@ parser.add_argument("dataset", type=str, help="Dataset you want to train on \nAD
 parser.add_argument("topPaths", type=int, help="Most significant Paths")
 parser.add_argument("label", type=int, help="Generate heatmap for what class? ")
 args = parser.parse_args()
-print("The Dataset is  = ",args.dataset)
-print("The age =  ",args.ageMatchUnmatch)
-print("Number of Path in Heatmap = ", args.topPaths)
-print("Clamped Neuron = ", args.label)
+print("The Dataset is          = ",args.dataset)
+print("The age                 = ",args.ageMatchUnmatch)
+print("Num of Paths in Heatmap = ", args.topPaths)
+print("Clamped Neuron          = ", args.label)
+
+
 path = os.getcwd()
 trainPath = os.getcwd()+ "/Data/" +args.ageMatchUnmatch+"/"+ args.dataset + "_train_data.xlsx"
 testPath  = os.getcwd()+ "/Data/" +args.ageMatchUnmatch+"/"+ args.dataset + "_test_data.xlsx"
@@ -44,6 +46,7 @@ xTrain, yTrain = clf.getTrainData()
 xTest, yTest   = clf.getTestData()
 idx, xPath, yPath = clf.getPaths()
 codeLabels(yTrain = yTrain,yTest = yTest,disorder = args.dataset)
+
 # Bring all Data in range 0.0 and 1.0
 xTrain = xTrain.astype('float32')
 xTest = xTest.astype('float32')
@@ -51,7 +54,7 @@ xTrain = (xTrain + 1)/2
 xTest  = (xTest  + 1)/2
 num_classes = len(np.unique(yTrain))
 print("Number of Classes", num_classes)
-# Input Image Dimenstions (The reshaped reduced Connectivity Matrix)
+# Input Image Dimensions (The reshaped reduced Connectivity Matrix)
 img_rows, img_cols = xTrain.shape[1:]
 print("Image Size = ("+str(img_rows)+", "+str(img_cols),")")
 if K.image_data_format() == 'channels_first':
