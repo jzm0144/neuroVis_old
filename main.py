@@ -38,6 +38,9 @@ print("Num of Paths in Heatmap = ", args.topPaths)
 print("Clamped Neuron          = ", args.label)
 
 
+
+
+
 path = os.getcwd()
 trainPath = os.getcwd()+ "/Data/" +args.ageMatchUnmatch+"/"+ args.dataset + "_train_data.xlsx"
 testPath  = os.getcwd()+ "/Data/" +args.ageMatchUnmatch+"/"+ args.dataset + "_test_data.xlsx"
@@ -47,11 +50,16 @@ xTest, yTest   = clf.getTestData()
 idx, xPath, yPath = clf.getPaths()
 codeLabels(yTrain = yTrain, yTest = yTest, disorder = args.dataset)
 
+
+
+
+
 # Bring all Data in range 0.0 and 1.0
 xTrain = xTrain.astype('float32')
 xTest = xTest.astype('float32')
 xTrain = (xTrain + 1)/2
 xTest  = (xTest  + 1)/2
+
 num_classes = len(np.unique(yTrain))
 print("Number of Classes", num_classes)
 # Input Image Dimensions (The reshaped reduced Connectivity Matrix)
@@ -65,7 +73,6 @@ else:
     xTrain = xTrain.reshape(xTrain.shape[0], img_rows, img_cols, 1)
     xTest  = xTest.reshape(xTest.shape[0], img_rows, img_cols, 1)
     input_shape = (img_rows, img_cols, 1)
-
 
 #Accuracy
 # convert class vectors to binary class matrices
@@ -82,18 +89,21 @@ trainModel(input_shape
 '''
 
 model = load_model('Models/'+ args.ageMatchUnmatch+"_"+args.dataset+'.h5')
+# Strip softmax layer
+model_no_softmax = innvestigate.utils.model_wo_softmax(model)
+
+
 
 #Decide your inputs
 inputs = xTest[:,:,:,:]
 outs   = yTest[:]
-print("True Label  ", outs)
-print("--------------\nPredicted   ",model.predict(inputs))
+preds = model.predict(inputs)
+for i in range(len(preds)):
+  print("Out= ",outs[i], "  Pred   ",preds[i])
+
+
+
 heatmapNumber = -1
-# Strip softmax layer
-model_no_softmax = innvestigate.utils.model_wo_softmax(model)
-#heatmaps = ["gradient", "input_t_gradient", "smoothgrad", "lrp.epsilon"]
-
-
 input_max = 1.0
 input_min = 0.0
 noise_scale = (input_max - input_min) * 0.005
@@ -161,8 +171,6 @@ for heatmap in heatmaps:
 # The Node File
 temp = {"ADNI":200, "ABIDE":200,"ADHD":190, "PTSD":125}
 nodeFile = args.dataset + str(temp[args.dataset]) + ".node"
-
-
 
 
 # Save the Consensus Heatmap Edge files
