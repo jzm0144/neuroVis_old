@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matlab.engine
 import os, sys
+import ipdb as ipdb
 
 
 def codeLabels(yTrain, yTest, disorder): #ABIDE, ADHD, PTSD, ADNI
@@ -76,7 +77,7 @@ def passTopPaths(connVec, top):
 
     return temp
 
-def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPath, yPath, map = "all"):
+def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPath, yPath, map = "all", edgeDir = "Edge/", exampleHNum=""):
 
     thisEdge  = ''
 
@@ -107,7 +108,7 @@ def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPat
 
        
 
-    # Saving Separte Relevance Edges
+    # Saving Separate Relevance Edges
     conn_str_pos = ''
     conn_str_neg = ''
 
@@ -147,33 +148,33 @@ def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPat
         conn_str_neg = conn_str_neg + '\n'
 
     if map == "abs":
-        thisEdge = 'Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'.edge'
+        thisEdge = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'.edge'
         file1 = open(thisEdge, 'w')
         file1.write(conn_str)
         file1.close()
     elif map == "pos":
-        thisEdge = 'Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'_pos.edge'
+        thisEdge = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'_pos.edge'
         file2 = open(thisEdge, 'w')
         file2.write(conn_str_pos)
         file2.close()
     elif map == "neg":
-        thisEdge = 'Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'_neg.edge'
+        thisEdge = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'_neg.edge'
         file3 = open(thisEdge, 'w')
         file3.write(conn_str_neg)
         file3.close()
-    # The all option has bug and need to fixed before 'all' option is used
+    # The all option has bug and needs be to fixed before 'all' option is used
     elif map == "all":
-        thisEdge = 'Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'.edge'
+        thisEdge =edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'.edge'
         file1 = open(thisEdge, 'w')
         file1.write(conn_str)
         file1.close()
 
-        thisEdge = 'Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'_pos.edge'
+        thisEdge = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'_pos.edge'
         file2 = open(thisEdge, 'w')
         file2.write(conn_str_pos)
         file2.close()
 
-        thisEdge = 'Edge/'+ heatmap_method +'_'+ dataset+'_l'+clampedNeuron+'_neg.edge'
+        thisEdge = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'_neg.edge'
         file3 = open(thisEdge, 'w')
         file3.write(conn_str_neg)
         file3.close()
@@ -191,7 +192,8 @@ def plotBrainNet(nodePath, edgePath, outputPath, configFile = "config.mat"):
     surfacePath = 'Surface/BrainMesh_ICBM152.nv'
 
 
-    outputFile = outputPath+'/'+edgePath[5:-5]+'.png'
+    outputFile = outputPath+'/'+edgePath[11:-5]+'.png'
+
     eng = matlab.engine.start_matlab(path)
 
     eng.BrainNet_MapCfg(surfacePath,
@@ -200,3 +202,5 @@ def plotBrainNet(nodePath, edgePath, outputPath, configFile = "config.mat"):
                         outputFile,
                         configFile)
     eng.quit()
+
+

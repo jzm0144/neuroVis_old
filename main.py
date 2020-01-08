@@ -37,8 +37,6 @@ print("Generate Heatmap for Data Example = ", args.heatmapNumber)
 print("Num of Paths in Heatmap           = ", args.topPaths)
 print("Clamped Neuron                    = ", args.label)
 
-ipdb.set_trace()
-
 
 path = os.getcwd()
 trainPath = os.getcwd()+ "/Data/" +args.ageMatchUnmatch+"/"+ args.dataset + "_train_data.xlsx"
@@ -138,6 +136,80 @@ heatmaps = [
       #("Meaningful Perturbation",       {}                                 ,  "Meaningful Perturbation")
 ]
 
+
+
+# The Node File
+temp = {"ADNI":200, "ABIDE":200,"ADHD":190, "PTSD":125}
+nodeFile = args.dataset + str(temp[args.dataset]) + ".node"
+
+
+# ------------------------------  Part 1  ------------------------------------
+# Generate Heatmaps for the Example Number
+for heatmap in heatmaps:
+    #Create the analyzers
+    analyzer = innvestigate.create_analyzer(heatmap[0],
+                                            model_no_softmax,
+                                            neuron_selection_mode = "index",
+                                            **heatmap[1])
+
+    # Generate the heatmaps
+    analysis = analyzer.analyze(inputs, args.label)
+
+    thisHeatmap = analysis[args.heatmapNumber, :, :, 0]
+
+    
+    # Save the Heatmap Edge files
+    edgeFilePath = saveEdgeFile(thisHeatmap,
+                 idx,
+                 heatmap[0],
+                 str(args.label),
+                 args.topPaths,
+                 args.dataset,
+                 xPath,
+                 yPath,
+                 map = "pos",
+                 edgeDir = "Edge/Part1/",
+                 exampleHNum = str(args.heatmapNumber))
+
+
+    plotBrainNet(nodePath = "Node2/"+nodeFile,
+                 edgePath = edgeFilePath,
+                 outputPath = 'Results/Part1/'+args.dataset,
+                 configFile = 'config.mat')
+# ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+#---------- Avg of Each Heatmap Method For All Examples ---------
+#---------- Edges saved in Directory Edge/Case1 -----------------
+# Mean Consensus
 consensus = []
 
 for heatmap in heatmaps:
@@ -166,13 +238,6 @@ for heatmap in heatmaps:
     consensus.append(avgMap(analysis[:,:,:,0]))
 
 
-
-
-# The Node File
-temp = {"ADNI":200, "ABIDE":200,"ADHD":190, "PTSD":125}
-nodeFile = args.dataset + str(temp[args.dataset]) + ".node"
-
-
 # Save the Consensus Heatmap Edge files
 # Also save the BrainNet png files
 for index in range(len(consensus)):
@@ -194,3 +259,43 @@ for index in range(len(consensus)):
                  edgePath = edge,
                  outputPath = 'Results/'+args.dataset,
                  configFile = 'config.mat')
+
+
+'''
+
+
+
+'''
+
+
+for heatmap in heatmaps:
+    #Create the analyzers
+    analyzer = innvestigate.create_analyzer(heatmap[0],
+                                            model_no_softmax,
+                                            neuron_selection_mode = "index",
+                                            **heatmap[1])    
+    # Generate the heatmaps
+    analysis = analyzer.analyze(inputs, args.label)
+
+    thisHeatmap = analysis[args.heatmapNumber, :, :, 0]
+
+    
+    # Save the Heatmap Edge files
+    edge = saveEdgeFile(thisHeatmap,
+                 idx,
+                 heatmap[0],
+                 str(args.label),
+                 args.topPaths,
+                 args.dataset,
+                 xPath,
+                 yPath,
+                 map = "pos")
+
+
+    plotBrainNet(nodePath = "Node2/"+nodeFile,
+                 edgePath = edge,
+                 outputPath = 'Results/'+args.dataset,
+                 configFile = 'config.mat')
+
+'''
+
