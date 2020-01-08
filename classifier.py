@@ -18,8 +18,6 @@ from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.utils.multiclass import type_of_target
 
-
-
 import argparse
 import os, sys
 import numpy as np 
@@ -28,14 +26,12 @@ import matplotlib.pyplot as plt
 from math import *
 import ipdb as ipdb
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument("ageMatchUnmatch", type=str, help = "Enter ageMatched or ageUnmatched")
 parser.add_argument("dataset", type=str, help="Which Dataset you want to train on \nADNI, ABIDE, ADHD or PTSD?")
 args = parser.parse_args()
 print("The Dataset is  = ",args.dataset)
 print("The age =  ",args.ageMatchUnmatch)
-
 
 class Transformer:
     def __init__(self, trainPath, testPath, verbose):
@@ -213,3 +209,6 @@ score = model.evaluate(xTest, yTest, verbose=0)
 model.save(args.ageMatchUnmatch+"_"+args.dataset+'.h5')
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
+
+
+

@@ -24,21 +24,20 @@ from Transformer import Transformer
 from utils import *
 from models import trainModel
 
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument("ageMatchUnmatch", type=str, help = "Enter ageMatched or ageUnmatched")
 parser.add_argument("dataset", type=str, help="Dataset you want to train on \nADNI, ABIDE, ADHD or PTSD?")
+parser.add_argument("heatmapNumber", type=int, help="Generate heatmap for the exmaple id")
 parser.add_argument("topPaths", type=int, help="Most significant Paths")
 parser.add_argument("label", type=int, help="Generate heatmap for what class? ")
 args = parser.parse_args()
-print("The Dataset is          = ",args.dataset)
-print("The age                 = ",args.ageMatchUnmatch)
-print("Num of Paths in Heatmap = ", args.topPaths)
-print("Clamped Neuron          = ", args.label)
+print("The Dataset is                    = ", args.dataset)
+print("The age                           = ", args.ageMatchUnmatch)
+print("Generate Heatmap for Data Example = ", args.heatmapNumber)
+print("Num of Paths in Heatmap           = ", args.topPaths)
+print("Clamped Neuron                    = ", args.label)
 
-
-
+ipdb.set_trace()
 
 
 path = os.getcwd()
@@ -62,6 +61,8 @@ xTest  = (xTest  + 1)/2
 
 num_classes = len(np.unique(yTrain))
 print("Number of Classes", num_classes)
+
+
 # Input Image Dimensions (The reshaped reduced Connectivity Matrix)
 img_rows, img_cols = xTrain.shape[1:]
 print("Image Size = ("+str(img_rows)+", "+str(img_cols),")")
@@ -99,11 +100,10 @@ inputs = xTest[:,:,:,:]
 outs   = yTest[:]
 preds = model.predict(inputs)
 for i in range(len(preds)):
-  print("Out= ",outs[i], "  Pred   ",preds[i])
+    print("Out= ",outs[i], "  Pred   ",preds[i])
 
 
-
-heatmapNumber = -1
+#heatmapNumber = -1
 input_max = 1.0
 input_min = 0.0
 noise_scale = (input_max - input_min) * 0.005
@@ -149,7 +149,7 @@ for heatmap in heatmaps:
     # Generate the heatmaps
     analysis = analyzer.analyze(inputs, args.label)
 
-    thisHeatmap = analysis[heatmapNumber, :, :, 0]
+    thisHeatmap = analysis[args.heatmapNumber, :, :, 0]
     
     # Save the Heatmap Edge files
     saveEdgeFile(thisHeatmap,
@@ -190,9 +190,7 @@ for index in range(len(consensus)):
                          yPath = yPath,
                          map = "pos")
 
-    plotBrainNet(nodePath = "Node/"+nodeFile,
+    plotBrainNet(nodePath = "Node2/"+nodeFile,
                  edgePath = edge,
                  outputPath = 'Results/'+args.dataset,
                  configFile = 'config.mat')
-
-

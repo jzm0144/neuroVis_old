@@ -88,3 +88,5 @@ class Transformer:
             yID.append(int(paths[i].split(',')[1][:-1]))
 
         return (spotID, xID, yID)
+
+
