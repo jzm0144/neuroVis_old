@@ -37,7 +37,6 @@ print("Generate Heatmap for Data Example = ", args.heatmapNumber)
 print("Num of Paths in Heatmap           = ", args.topPaths)
 print("Clamped Neuron                    = ", args.label)
 
-
 path = os.getcwd()
 trainPath = os.getcwd()+ "/Data/" +args.ageMatchUnmatch+"/"+ args.dataset + "_train_data.xlsx"
 testPath  = os.getcwd()+ "/Data/" +args.ageMatchUnmatch+"/"+ args.dataset + "_test_data.xlsx"
@@ -46,10 +45,6 @@ xTrain, yTrain = clf.getTrainData()
 xTest, yTest   = clf.getTestData()
 idx, xPath, yPath = clf.getPaths()
 codeLabels(yTrain = yTrain, yTest = yTest, disorder = args.dataset)
-
-
-
-
 
 # Bring all Data in range 0.0 and 1.0
 xTrain = xTrain.astype('float32')
@@ -177,14 +172,13 @@ for heatmap in heatmaps:
                  outputPath = 'Results/Part1/'+args.dataset,
                  configFile = 'config.mat')
 # ----------------------------------------------------------------------------
-'''
 
 
 
 
 # ------------------------------  Part 2  ------------------------------------
 # -------------- Avg of Each Heatmap Method For All Examples -----------------
-# ----------------- Edges saved in Directory Edge/Case1 ----------------------
+# ----------------- Edges saved in Directory Edge/Part2 ----------------------
 
 for heatmap in heatmaps:
     #Create the analyzers
@@ -215,6 +209,50 @@ for heatmap in heatmaps:
     plotBrainNet(nodePath = "Node2/"+nodeFile,
                  edgePath = edge,
                  outputPath = 'Results/Part2/'+args.dataset,
+                 configFile = 'config.mat')
+
+# ----------------------------------------------------------------------------
+
+'''
+
+# ------------------------------  Part 3  ------------------------------------
+# -------------- Avg of All Heatmaps For the Same Example -----------------
+# ----------------- Edges saved in Directory Edge/Part3 ----------------------
+mapFrame = np.zeros((len(heatmaps),inputs.shape[0],inputs.shape[1],inputs.shape[2]))
+
+
+for index, heatmap in enumerate(heatmaps):
+    #Create the analyzers
+    analyzer = innvestigate.create_analyzer(heatmap[0],
+                                            model_no_softmax,
+                                            neuron_selection_mode = "index",
+                                            **heatmap[1])    
+    # Generate the heatmaps
+    analysis = analyzer.analyze(inputs, args.label)
+
+    # Heatmaps of this current method are put in this spot of the mapFrame
+    mapFrame[index,:,:,:] = analysis[:,:,:,0]
+
+    meanHeatmap_for_given_example = mapFrame[:,args.heatmapNumber, :, :]
+
+
+    # Save the Mean Heatmap Edge files
+    edge = saveEdgeFile(img = meanHeatmap_for_given_example,
+                         idx = idx,
+                         heatmap_method = "meanHeatmap",
+                         clampedNeuron = str(args.label),
+                         topPaths = args.topPaths,
+                         dataset = args.dataset,
+                         xPath = xPath,
+                         yPath = yPath,
+                         map = "pos",
+                         edgeDir = "Edge/Part3/",
+                         exampleHNum = str(args.heatmapNumber))
+
+    # Also save the BrainNet png files
+    plotBrainNet(nodePath = "Node2/"+nodeFile,
+                 edgePath = edge,
+                 outputPath = 'Results/Part3/'+args.dataset,
                  configFile = 'config.mat')
 
 # ----------------------------------------------------------------------------
