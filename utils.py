@@ -80,7 +80,7 @@ def passTopPaths(connVec, top):
 def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPath, yPath, map = "all", edgeDir = "Edge/", exampleHNum=""):
 
     thisEdge  = ''
-
+    
 
     vec = square2Vec(img, vecLength=len(idx))
     vec = passTopPaths(vec, top = topPaths)

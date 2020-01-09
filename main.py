@@ -142,9 +142,9 @@ heatmaps = [
 temp = {"ADNI":200, "ABIDE":200,"ADHD":190, "PTSD":125}
 nodeFile = args.dataset + str(temp[args.dataset]) + ".node"
 
-
+'''
 # ------------------------------  Part 1  ------------------------------------
-# Generate Heatmaps for the Example Number
+# Generate Heatmaps of the Given Example Number
 for heatmap in heatmaps:
     #Create the analyzers
     analyzer = innvestigate.create_analyzer(heatmap[0],
@@ -176,41 +176,15 @@ for heatmap in heatmaps:
                  edgePath = edgeFilePath,
                  outputPath = 'Results/Part1/'+args.dataset,
                  configFile = 'config.mat')
-# ---------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ----------------------------------------------------------------------------
 '''
-#---------- Avg of Each Heatmap Method For All Examples ---------
-#---------- Edges saved in Directory Edge/Case1 -----------------
-# Mean Consensus
-consensus = []
+
+
+
+
+# ------------------------------  Part 2  ------------------------------------
+# -------------- Avg of Each Heatmap Method For All Examples -----------------
+# ----------------- Edges saved in Directory Edge/Case1 ----------------------
 
 for heatmap in heatmaps:
     #Create the analyzers
@@ -221,81 +195,26 @@ for heatmap in heatmaps:
     # Generate the heatmaps
     analysis = analyzer.analyze(inputs, args.label)
 
-    thisHeatmap = analysis[args.heatmapNumber, :, :, 0]
-    
-    # Save the Heatmap Edge files
-    saveEdgeFile(thisHeatmap,
-                 idx,
-                 heatmap[0],
-                 str(args.label),
-                 args.topPaths,
-                 args.dataset,
-                 xPath,
-                 yPath,
-                 map = "pos")
-
-    # consensus heatmap
-    consensus.append(avgMap(analysis[:,:,:,0]))
+    # mean heatmap
+    meanHeatmap = avgMap(analysis[:,:,:,0])
 
 
-# Save the Consensus Heatmap Edge files
-# Also save the BrainNet png files
-for index in range(len(consensus)):
-    heatmap = consensus[index]
-    heatTuple = heatmaps[index]
-    heatmapLabel = heatTuple[0]
-    
-    edge = saveEdgeFile(img = heatmap,
+    # Save the Mean Heatmap Edge files
+    edge = saveEdgeFile(img = meanHeatmap,
                          idx = idx,
-                         heatmap_method = "concensus_"+heatmapLabel,
+                         heatmap_method = "mean_"+heatmap[0],
                          clampedNeuron = str(args.label),
                          topPaths = args.topPaths,
                          dataset = args.dataset,
                          xPath = xPath,
                          yPath = yPath,
-                         map = "pos")
+                         map = "pos",
+                         edgeDir = "Edge/Part2/")
 
+    # Also save the BrainNet png files
     plotBrainNet(nodePath = "Node2/"+nodeFile,
                  edgePath = edge,
-                 outputPath = 'Results/'+args.dataset,
+                 outputPath = 'Results/Part2/'+args.dataset,
                  configFile = 'config.mat')
 
-
-'''
-
-
-
-'''
-
-
-for heatmap in heatmaps:
-    #Create the analyzers
-    analyzer = innvestigate.create_analyzer(heatmap[0],
-                                            model_no_softmax,
-                                            neuron_selection_mode = "index",
-                                            **heatmap[1])    
-    # Generate the heatmaps
-    analysis = analyzer.analyze(inputs, args.label)
-
-    thisHeatmap = analysis[args.heatmapNumber, :, :, 0]
-
-    
-    # Save the Heatmap Edge files
-    edge = saveEdgeFile(thisHeatmap,
-                 idx,
-                 heatmap[0],
-                 str(args.label),
-                 args.topPaths,
-                 args.dataset,
-                 xPath,
-                 yPath,
-                 map = "pos")
-
-
-    plotBrainNet(nodePath = "Node2/"+nodeFile,
-                 edgePath = edge,
-                 outputPath = 'Results/'+args.dataset,
-                 configFile = 'config.mat')
-
-'''
-
+# ----------------------------------------------------------------------------
