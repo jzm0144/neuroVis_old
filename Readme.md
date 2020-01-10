@@ -10,3 +10,16 @@ Here is an example run:
 
     $ python main.py ageMatchUnmatch disorder dataExample topPaths classID
 	$ python main.py ageMatched         PTSD      -1         10       0
+
+
+
+Part1 Results:
+
+
+Part2 Results:
+
+
+Part3 Results:
+
+
+Part4 Results:

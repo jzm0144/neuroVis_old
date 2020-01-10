@@ -261,7 +261,7 @@ plotBrainNet(nodePath = "Node2/"+nodeFile,
 
 
 mapFrame = np.zeros((len(heatmaps),inputs.shape[0],inputs.shape[1],inputs.shape[2]))
-X = 100
+X = 150
 
 for index, heatmap in enumerate(heatmaps):
     #Step1: Calc all Heatmaps for the same example  
@@ -301,6 +301,7 @@ edge = saveEdgeFile(img = intMask[args.heatmapNumber,:,:],#FinalHeatmaps[args.he
                      map = "pos",
                      edgeDir = "Edge/Part4/",
                      exampleHNum = str(args.heatmapNumber))
+
 
 # Also save the BrainNet png files
 plotBrainNet(nodePath = "Node2/"+nodeFile,
