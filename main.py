@@ -1,5 +1,5 @@
 """
-Created on Sunday October 1st 19:31:41 2019
+Created on Sunday Jan 9th 19:31:41 2020
 @author: Janzaib Masood
 """
 from __future__ import print_function
@@ -31,6 +31,7 @@ parser.add_argument("heatmapNumber", type=int, help="Generate heatmap for the ex
 parser.add_argument("topPaths", type=int, help="Most significant Paths")
 parser.add_argument("label", type=int, help="Generate heatmap for what class? ")
 args = parser.parse_args()
+
 print("The Dataset is                    = ", args.dataset)
 print("The age                           = ", args.ageMatchUnmatch)
 print("Generate Heatmap for Data Example = ", args.heatmapNumber)
@@ -111,8 +112,8 @@ heatmaps = [
                                          "noise_scale": noise_scale,
                                          "postprocess": "square"}          ,  "SmoothGrad"),
       ("input_t_gradient",              {}                                 ,  "Input * Gradient"),
-      ("integrated_gradients",          {"reference_inputs": input_min,
-                                         "steps": 16}                      ,  "Integrated Gradients"),
+      #("integrated_gradients",          {"reference_inputs": input_min,
+      #                                   "steps": 16}                      ,  "Integrated Gradients"),
 
       ("deconvnet",                     {}                                 ,  "Deconvnet"),
       ("guided_backprop",               {}                                 ,  "Guided Backprop"),
@@ -209,7 +210,6 @@ for heatmap in heatmaps:
                  configFile = 'config.mat')
 
 # ----------------------------------------------------------------------------
-'''
 # ------------------------------  Part 3  ------------------------------------
 # -------------- Avg of All Heatmaps For the Same Example --------------------
 # ----------------- Edges saved in Directory Edge/Part3 ----------------------
@@ -249,56 +249,63 @@ plotBrainNet(nodePath = "Node2/"+nodeFile,
              edgePath = edge,
              outputPath = 'Results/Part3/'+args.dataset,
              configFile = 'config.mat')
-
 # ----------------------------------------------------------------------------
-
-
-
-
-
 '''
+
 # ------------------------------  Part 4  ------------------------------------
 # --------- step1: Calc all Heatmaps for the Same Example --------------------
 # --------- step2: Sparsify: Let only top-X paths pass thruough --------------
 # --------- step3: Calc Binary Intersection of path occurences ---------------
-# --------- step4: Calc Means and element-wise multiply with Binary Intersetion
+# --------- step4: Calc Mean and Element-wise multiply with Binary Intersetion
+
+
 
 mapFrame = np.zeros((len(heatmaps),inputs.shape[0],inputs.shape[1],inputs.shape[2]))
-
+X = 100
 
 for index, heatmap in enumerate(heatmaps):
-    #Create the analyzers
+    #Step1: Calc all Heatmaps for the same example  
     analyzer = innvestigate.create_analyzer(heatmap[0],
                                             model_no_softmax,
                                             neuron_selection_mode = "index",
                                             **heatmap[1])    
-    # Generate the heatmaps
     analysis = analyzer.analyze(inputs, args.label)
 
-    # Heatmaps of this current method are put in this spot of the mapFrame
-    mapFrame[index,:,:,:] = analysis[:,:,:,0]
+    #Step2: Sparsify: Let only top-X paths pass through
+    Maps = analysis[:,:,:,0].copy()
+    for __ in range(Maps.shape[0]):
+        Maps[__,:,:] = pass_topX_2D(Maps[__,:,:], X, verbose=False)
+    mapFrame[index, :, :, :] = Maps.copy()
+BinaryMask = mapFrame.copy()
+BinaryMask[BinaryMask > 0] = 1
 
-    meanHeatmap_for_given_example = mapFrame[:,args.heatmapNumber, :, :]
+
+#Step3: Calc Binary Intersection of path occurrences
+intMask = np.ones(BinaryMask.shape[1:])
+for __ in range(BinaryMask.shape[0]):
+    intMask = np.multiply(intMask[:,:,:], BinaryMask[__,:,:,:])
+
+#Step4: Calc Mean and Element-wise multiply with Binary Intersection
+#FinalHeatmaps = np.multiply(intMask, np.mean(mapFrame, axis=0))
 
 
-    # Save the Mean Heatmap Edge files
-    edge = saveEdgeFile(img = meanHeatmap_for_given_example,
-                         idx = idx,
-                         heatmap_method = "meanHeatmap",
-                         clampedNeuron = str(args.label),
-                         topPaths = args.topPaths,
-                         dataset = args.dataset,
-                         xPath = xPath,
-                         yPath = yPath,
-                         map = "pos",
-                         edgeDir = "Edge/Part4/",
-                         exampleHNum = str(args.heatmapNumber))
+# Save the Mean Heatmap Edge files
+edge = saveEdgeFile(img = intMask[args.heatmapNumber,:,:],#FinalHeatmaps[args.heatmapNumber,:,:],
+                     idx = idx,
+                     heatmap_method = "intHeatmap",
+                     clampedNeuron = str(args.label),
+                     topPaths = args.topPaths,
+                     dataset = args.dataset,
+                     xPath = xPath,
+                     yPath = yPath,
+                     map = "pos",
+                     edgeDir = "Edge/Part4/",
+                     exampleHNum = str(args.heatmapNumber))
 
-    # Also save the BrainNet png files
-    plotBrainNet(nodePath = "Node2/"+nodeFile,
-                 edgePath = edge,
-                 outputPath = 'Results/Part4/'+args.dataset,
-                 configFile = 'config.mat')
+# Also save the BrainNet png files
+plotBrainNet(nodePath = "Node2/"+nodeFile,
+             edgePath = edge,
+             outputPath = 'Results/Part4/'+args.dataset,
+             configFile = 'config.mat')
 
 # ----------------------------------------------------------------------------
-'''

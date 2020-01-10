@@ -4,7 +4,7 @@ import numpy as np
 import matlab.engine
 import os, sys
 import ipdb as ipdb
-
+import bottleneck as bn
 
 def codeLabels(yTrain, yTest, disorder): #ABIDE, ADHD, PTSD, ADNI
     if disorder == "ADNI":
@@ -80,9 +80,9 @@ def passTopPaths(connVec, top):
 def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPath, yPath, map = "all", edgeDir = "Edge/", exampleHNum=""):
 
     thisEdge  = ''
-    
 
     vec = square2Vec(img, vecLength=len(idx))
+
     vec = passTopPaths(vec, top = topPaths)
 
 
@@ -204,3 +204,14 @@ def plotBrainNet(nodePath, edgePath, outputPath, configFile = "config.mat"):
     eng.quit()
 
 
+def pass_topX_2D(arr, X, verbose=False):
+    idx = bn.argpartition(arr, arr.size-X, axis=None)[-X:]
+    width = arr.shape[1]
+    idx = [divmod(i, width) for i in idx]
+    idx.sort(key = lambda tup: tup[0])
+    if verbose == True:
+        print("The sorted 2D indices = ", idx)
+    mat = np.zeros(arr.shape)
+    for item in idx:
+        mat[item[0], item[1]] = arr[item[0], item[1]]
+    return mat
