@@ -5,7 +5,7 @@ Please install all the required Libariers for the project using the following co
 
     $ pip install -r requirements.txt 
 
-Generating Concensus Heatmaps is ver Easy. Please run the file main.py with the four arguments: the dataset, the brain disorder, number of paths, the class id
+Please run the file main.py with the four arguments: the dataset, the brain disorder, number of paths, the class id
 
 Here is an example run:
 
@@ -14,7 +14,7 @@ Here is an example run:
 
 
 
-Part1 Results:
+<h2>Part1 Results:</h2>
     Part1 results are in Results/Part1/PTSD/
     Generates specific explanation for each heatmap method and each example.
 
