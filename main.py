@@ -173,9 +173,6 @@ for heatmap in heatmaps:
                  configFile = 'config.mat')
 # ----------------------------------------------------------------------------
 
-
-
-
 # ------------------------------  Part 2  ------------------------------------
 # -------------- Avg of Each Heatmap Method For All Examples -----------------
 # ----------------- Edges saved in Directory Edge/Part2 ----------------------
@@ -212,12 +209,60 @@ for heatmap in heatmaps:
                  configFile = 'config.mat')
 
 # ----------------------------------------------------------------------------
+'''
+# ------------------------------  Part 3  ------------------------------------
+# -------------- Avg of All Heatmaps For the Same Example --------------------
+# ----------------- Edges saved in Directory Edge/Part3 ----------------------
+mapFrame = np.zeros((len(heatmaps),inputs.shape[0],inputs.shape[1],inputs.shape[2]))
+
+
+for index, heatmap in enumerate(heatmaps):
+    #Create the analyzers
+    analyzer = innvestigate.create_analyzer(heatmap[0],
+                                            model_no_softmax,
+                                            neuron_selection_mode = "index",
+                                            **heatmap[1])    
+    # Generate the heatmaps
+    analysis = analyzer.analyze(inputs, args.label)
+
+    # Heatmaps of this current method are put in this spot of the mapFrame
+    mapFrame[index,:,:,:] = analysis[:,:,:,0]
+
+
+meanHeatmap_for_given_example = np.mean(mapFrame[:,args.heatmapNumber, :, :], axis=0)
+
+# Save the Mean Heatmap Edge files
+edge = saveEdgeFile(img = meanHeatmap_for_given_example,
+                     idx = idx,
+                     heatmap_method = "meanHeatmap",
+                     clampedNeuron = str(args.label),
+                     topPaths = args.topPaths,
+                     dataset = args.dataset,
+                     xPath = xPath,
+                     yPath = yPath,
+                     map = "pos",
+                     edgeDir = "Edge/Part3/",
+                     exampleHNum = str(args.heatmapNumber))
+
+# Also save the BrainNet png files
+plotBrainNet(nodePath = "Node2/"+nodeFile,
+             edgePath = edge,
+             outputPath = 'Results/Part3/'+args.dataset,
+             configFile = 'config.mat')
+
+# ----------------------------------------------------------------------------
+
+
+
+
 
 '''
+# ------------------------------  Part 4  ------------------------------------
+# --------- step1: Calc all Heatmaps for the Same Example --------------------
+# --------- step2: Sparsify: Let only top-X paths pass thruough --------------
+# --------- step3: Calc Binary Intersection of path occurences ---------------
+# --------- step4: Calc Means and element-wise multiply with Binary Intersetion
 
-# ------------------------------  Part 3  ------------------------------------
-# -------------- Avg of All Heatmaps For the Same Example -----------------
-# ----------------- Edges saved in Directory Edge/Part3 ----------------------
 mapFrame = np.zeros((len(heatmaps),inputs.shape[0],inputs.shape[1],inputs.shape[2]))
 
 
@@ -246,13 +291,14 @@ for index, heatmap in enumerate(heatmaps):
                          xPath = xPath,
                          yPath = yPath,
                          map = "pos",
-                         edgeDir = "Edge/Part3/",
+                         edgeDir = "Edge/Part4/",
                          exampleHNum = str(args.heatmapNumber))
 
     # Also save the BrainNet png files
     plotBrainNet(nodePath = "Node2/"+nodeFile,
                  edgePath = edge,
-                 outputPath = 'Results/Part3/'+args.dataset,
+                 outputPath = 'Results/Part4/'+args.dataset,
                  configFile = 'config.mat')
 
 # ----------------------------------------------------------------------------
+'''
