@@ -7,14 +7,14 @@ Please install all the required Libariers for the project using the following co
 
 Please run the file main.py with the four arguments: the dataset, the brain disorder, number of paths, the class id
 
-<h1>Here is an example run:</h1>
+<h2>Here is an example run:</h2>
 
     $ python main.py ageMatchUnmatch disorder dataExample topPaths classID
 	$ python main.py ageMatched         PTSD      13         10       0
 
 
 
-<h2>Part1 Results:</h2>
+<h3>Part1 Results:</h3>
     Part1 results are in Results/Part1/PTSD/
     Generates specific explanation for each heatmap method and each example.
 
@@ -24,11 +24,11 @@ Please run the file main.py with the four arguments: the dataset, the brain diso
     In Part2 experiment we calculate an avg of each Heatmap Method over all data examples
     It generates a 1 final image (avg of heatmaps of all examples) for each heatmap method.
 
-<h4>Part3 Results:</h4>
+<h3>Part3 Results:</h3>
     Part3 results are in Results/Part3/PTSD/
     It generates an avg of All Heatmaps for a given example. So this kind of explanation takes the opinion of each heatmap method but in a very naive way.
 
-<h1>Part4 Results:</h1>
+<h3>Part4 Results:</h3>
     Part4 results are in Results/Part4/PTSD/
     This experiment calculates an explanation based on the opinion of all heatmaps.
 
