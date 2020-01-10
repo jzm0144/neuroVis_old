@@ -14,17 +14,17 @@ Please run the file main.py with the four arguments: the dataset, the brain diso
 
 
 
-<h1>Part1 Results:</h1>
+<h2>Part1 Results:</h2>
     Part1 results are in Results/Part1/PTSD/
     Generates specific explanation for each heatmap method and each example.
 
 
-<h1>Part2 Results:</h1>
+<h3>Part2 Results:</h3>
     Part2 results are in Results/Part2/PTSD/
     In Part2 experiment we calculate an avg of each Heatmap Method over all data examples
     It generates a 1 final image (avg of heatmaps of all examples) for each heatmap method.
 
-<h1>Part3 Results:</h1>
+<h4>Part3 Results:</h4>
     Part3 results are in Results/Part3/PTSD/
     It generates an avg of All Heatmaps for a given example. So this kind of explanation takes the opinion of each heatmap method but in a very naive way.
 
