@@ -6,6 +6,7 @@ import os, sys
 import ipdb as ipdb
 import bottleneck as bn
 
+
 def codeLabels(yTrain, yTest, disorder): #ABIDE, ADHD, PTSD, ADNI
     if disorder == "ADNI":
         yTrain[yTrain == 'Controls'] = 0
@@ -51,6 +52,7 @@ def square2Vec(img, vecLength):
     vec = imgVec[:vecLength]
     return vec
 
+
 def vector2Conn(indices, xPath, yPath, disorder, strengthVector):
     matSize = {"ADNI":200, "ABIDE":200,"ADHD":190, "PTSD":125}
     
@@ -60,6 +62,7 @@ def vector2Conn(indices, xPath, yPath, disorder, strengthVector):
 
         M[xPath[index]-1, yPath[index]-1] = strengthVector[index]
     return M
+
 
 def passTopPaths(connVec, top):   
     length = connVec.shape[0]
@@ -77,7 +80,8 @@ def passTopPaths(connVec, top):
 
     return temp
 
-def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPath, yPath, map = "all", edgeDir = "Edge/", exampleHNum=""):
+
+def saveEdgeFile(img, idx, heatmap_method, clampNeuron, topPaths, dataset,xPath, yPath, predNeuron="", actualNeuron="", map = "all", edgeDir = "Edge/", exampleHNum=""):
 
     thisEdge  = ''
 
@@ -147,34 +151,36 @@ def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPat
         conn_str_pos = conn_str_pos + '\n'
         conn_str_neg = conn_str_neg + '\n'
 
+
+    nameString = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_y'+actualNeuron+'_yHat'+predNeuron+'_l'+clampNeuron
     if map == "abs":
-        thisEdge = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'.edge'
+        thisEdge = nameString +'.edge'
         file1 = open(thisEdge, 'w')
         file1.write(conn_str)
         file1.close()
     elif map == "pos":
-        thisEdge = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'_pos.edge'
+        thisEdge = nameString +'_pos.edge'
         file2 = open(thisEdge, 'w')
         file2.write(conn_str_pos)
         file2.close()
     elif map == "neg":
-        thisEdge = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'_neg.edge'
+        thisEdge = nameString +'_neg.edge'
         file3 = open(thisEdge, 'w')
         file3.write(conn_str_neg)
         file3.close()
     # The all option has bug and needs be to fixed before 'all' option is used
     elif map == "all":
-        thisEdge =edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'.edge'
+        thisEdge =nameString +'.edge'
         file1 = open(thisEdge, 'w')
         file1.write(conn_str)
         file1.close()
 
-        thisEdge = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'_pos.edge'
+        thisEdge = nameString +'_pos.edge'
         file2 = open(thisEdge, 'w')
         file2.write(conn_str_pos)
         file2.close()
 
-        thisEdge = edgeDir+ heatmap_method +'_'+ dataset+'_e'+exampleHNum+'_l'+clampedNeuron+'_neg.edge'
+        thisEdge = nameString +'_neg.edge'
         file3 = open(thisEdge, 'w')
         file3.write(conn_str_neg)
         file3.close()
@@ -184,6 +190,7 @@ def saveEdgeFile(img, idx, heatmap_method, clampedNeuron, topPaths, dataset,xPat
 def avgMap(allTestMaps):
     heatmap = np.mean(allTestMaps, axis = 0)
     return heatmap
+
 
 def plotBrainNet(nodePath, edgePath, outputPath, configFile = "config.mat"):
     
@@ -204,6 +211,7 @@ def plotBrainNet(nodePath, edgePath, outputPath, configFile = "config.mat"):
     eng.quit()
 
 
+
 def pass_topX_2D(arr, X, verbose=False):
     idx = bn.argpartition(arr, arr.size-X, axis=None)[-X:]
     width = arr.shape[1]
@@ -215,3 +223,4 @@ def pass_topX_2D(arr, X, verbose=False):
     for item in idx:
         mat[item[0], item[1]] = arr[item[0], item[1]]
     return mat
+

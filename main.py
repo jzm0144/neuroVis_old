@@ -96,8 +96,6 @@ preds = model.predict(inputs)
 for i in range(len(preds)):
     print("Out= ",outs[i], "  Pred   ",preds[i])
 
-
-#heatmapNumber = -1
 input_max = 1.0
 input_min = 0.0
 noise_scale = (input_max - input_min) * 0.005
@@ -108,23 +106,24 @@ heatmaps = [
 
       # Gradient Family        
       ("gradient",                      {}                                 ,  "Gradient"),
-      ("smoothgrad",                    {"augment_by_n": 1,
-                                         "noise_scale": noise_scale,
-                                         "postprocess": "square"}          ,  "SmoothGrad"),
-      ("input_t_gradient",              {}                                 ,  "Input * Gradient"),
+      #("smoothgrad",                    {"augment_by_n": 1,
+      #                                   "noise_scale": noise_scale,
+      #                                   "postprocess": "square"}          ,  "SmoothGrad"),
+      #("input_t_gradient",              {}                                 ,  "Input * Gradient"),
       #("integrated_gradients",          {"reference_inputs": input_min,
       #                                   "steps": 16}                      ,  "Integrated Gradients"),
 
-      ("deconvnet",                     {}                                 ,  "Deconvnet"),
-      ("guided_backprop",               {}                                 ,  "Guided Backprop"),
+      #("deconvnet",                     {}                                 ,  "Deconvnet"),
+      #("guided_backprop",               {}                                 ,  "Guided Backprop"),
 
       # LRP Family
-      ("deep_taylor.bounded",           {"low": input_min,
-                                         "high": input_max}                ,  "DeepTaylor"),
-      ("lrp.z",                         {}                                 ,  "LRP-Z"),
-      ("lrp.epsilon",                   {"epsilon": 1}                     ,  "LRP-Epsilon"),
-      ("lrp.sequential_preset_a_flat",  {"epsilon": 1}                     ,  "LRP-PresetAFlat"),
-      ("lrp.sequential_preset_b_flat",  {"epsilon": 1}                     ,  "LRP-PresetBFlat"),
+      #("deep_taylor.bounded",           {"low": input_min,
+      #                                   "high": input_max}                ,  "DeepTaylor"),
+      #("lrp.z",                         {}                                 ,  "LRP-Z"),
+      #("lrp.epsilon",                   {"epsilon": 1}                     ,  "LRP-Epsilon"),
+      #("lrp.sequential_preset_a_flat",  {"epsilon": 1}                     ,  "LRP-PresetAFlat"),
+      #("lrp.sequential_preset_b_flat",  {"epsilon": 1}                     ,  "LRP-PresetBFlat"),
+
       # State of the Art Methods
       #("occlusion",                     {}                                 ,  "Occlusion Map"),
       #("lime",                          {}                                 ,  "Lime Method"),
@@ -138,7 +137,6 @@ heatmaps = [
 temp = {"ADNI":200, "ABIDE":200,"ADHD":190, "PTSD":125}
 nodeFile = args.dataset + str(temp[args.dataset]) + ".node"
 
-'''
 # ------------------------------  Part 1  ------------------------------------
 # Generate Heatmaps of the Given Example Number
 for heatmap in heatmaps:
@@ -165,7 +163,9 @@ for heatmap in heatmaps:
                  yPath,
                  map = "pos",
                  edgeDir = "Edge/Part1/",
-                 exampleHNum = str(args.heatmapNumber))
+                 exampleHNum = str(args.heatmapNumber),
+                 predNeuron=str(np.argmax(preds[args.heatmapNumber])),
+                 actualNeuron=str(np.argmax(outs[args.heatmapNumber])))
 
 
     plotBrainNet(nodePath = "Node2/"+nodeFile,
@@ -173,7 +173,7 @@ for heatmap in heatmaps:
                  outputPath = 'Results/Part1/'+args.dataset,
                  configFile = 'config.mat')
 # ----------------------------------------------------------------------------
-
+'''
 # ------------------------------  Part 2  ------------------------------------
 # -------------- Avg of Each Heatmap Method For All Examples -----------------
 # ----------------- Edges saved in Directory Edge/Part2 ----------------------
@@ -250,7 +250,7 @@ plotBrainNet(nodePath = "Node2/"+nodeFile,
              outputPath = 'Results/Part3/'+args.dataset,
              configFile = 'config.mat')
 # ----------------------------------------------------------------------------
-'''
+
 
 # ------------------------------  Part 4  ------------------------------------
 # --------- step1: Calc all Heatmaps for the Same Example --------------------
@@ -310,3 +310,4 @@ plotBrainNet(nodePath = "Node2/"+nodeFile,
              configFile = 'config.mat')
 
 # ----------------------------------------------------------------------------
+'''
